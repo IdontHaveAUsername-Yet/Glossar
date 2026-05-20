@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossar</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.15);
+    --text: #1a1916;
+    --text2: #6b6860;
+    --text3: #a8a59f;
+    --accent: #2d5a27;
+    --accent-bg: #eef4ed;
+    --accent-text: #2d5a27;
+    --danger: #c0392b;
+    --danger-bg: #fdf0ef;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+
+  [data-theme="dark"] {
+    --bg: #111110;
+    --surface: #1c1c1a;
+    --surface2: #252523;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #f0ede6;
+    --text2: #a8a59f;
+    --text3: #5e5c58;
+    --accent: #5aad52;
+    --accent-bg: #162314;
+    --accent-text: #5aad52;
+    --danger: #e05c4f;
+    --danger-bg: #2a1512;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+  .logo span { color: var(--accent); }
+  .topbar-search {
+    flex: 1;
+    max-width: 380px;
+    position: relative;
+  }
+  .topbar-search input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 7px 12px 7px 34px;
+    font-size: 13.5px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .topbar-search input:focus { border-color: var(--accent); }
+  .topbar-search .si {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    color: var(--text3);
+  }
+  .topbar-right { margin-left: auto; display: flex; gap: 8px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--surface2); }
+  .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn.primary:hover { background: #235120; }
+  .btn.danger { color: var(--danger); border-color: rgba(192,57,43,0.2); }
+  .btn.danger:hover { background: var(--danger-bg); }
+
+  /* ─── LAYOUT ─── */
+  .app { display: flex; flex: 1; min-height: 0; }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .sidebar-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sidebar-title { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .sidebar-add { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 18px; padding: 2px; border-radius: 4px; }
+  .sidebar-add:hover { color: var(--accent); background: var(--accent-bg); }
+
+  .subject-item {
+    border-bottom: 1px solid var(--border);
+  }
+  .subject-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .subject-head:hover { background: var(--bg); }
+  .subject-head.active { background: var(--accent-bg); }
+  .subject-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .subject-name {
+    font-size: 13.5px; font-weight: 500; flex: 1;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .subject-count {
+    font-size: 11px; color: var(--text3); background: var(--surface2);
+    padding: 1px 6px; border-radius: 20px;
+  }
+  .subject-chevron { font-size: 12px; color: var(--text3); transition: transform 0.2s; }
+  .subject-chevron.open { transform: rotate(90deg); }
+
+  .cat-list { background: var(--bg); }
+  .cat-item {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 12px 7px 32px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text2);
+    transition: background 0.1s, color 0.1s;
+    border-radius: 0;
+  }
+  .cat-item:hover { background: var(--surface2); color: var(--text); }
+  .cat-item.active { color: var(--accent); font-weight: 500; }
+  .cat-item .cat-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .cat-count { font-size: 11px; color: var(--text3); margin-left: auto; }
+
+  .cat-add-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px 8px 32px;
+    font-size: 12px; color: var(--text3);
+    cursor: pointer; background: none; border: none;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+    text-align: left;
+  }
+  .cat-add-btn:hover { color: var(--accent); }
+
+  /* ─── MAIN ─── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .main-header {
+    padding: 1.25rem 1.5rem 0;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 1rem;
+  }
+  .main-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 26px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .main-subtitle { font-size: 13px; color: var(--text3); margin-top: 2px; }
+
+  .filter-bar {
+    padding: 0.75rem 1.5rem;
+    display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+  }
+  .filter-chip {
+    font-size: 12px; padding: 4px 12px; border-radius: 20px;
+    border: 1px solid var(--border2); background: var(--surface);
+    color: var(--text2); cursor: pointer; transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .filter-count { font-size: 12px; color: var(--text3); margin-left: auto; }
+
+  .terms-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 1.5rem 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+    align-content: start;
+  }
+
+  .term-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    cursor: pointer;
+    transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+    position: relative;
+  }
+  .term-card:hover {
+    border-color: var(--border2);
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+  .term-card-head { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+  .term-name { font-size: 14.5px; font-weight: 500; flex: 1; line-height: 1.3; }
+  .cat-tag {
+    font-size: 11px; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; font-weight: 500;
+  }
+  .term-def {
+    font-size: 13px; color: var(--text2); line-height: 1.6;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .term-card-actions {
+    display: flex; gap: 6px; margin-top: 10px; opacity: 0; transition: opacity 0.15s;
+  }
+  .term-card:hover .term-card-actions { opacity: 1; }
+  .term-action {
+    font-size: 11px; padding: 3px 8px; border-radius: 6px;
+    border: 1px solid var(--border2); background: var(--bg);
+    color: var(--text2); cursor: pointer; font-family: 'DM Sans', sans-serif;
+    transition: background 0.1s;
+  }
+  .term-action:hover { background: var(--surface2); }
+  .term-action.del:hover { background: var(--danger-bg); color: var(--danger); border-color: rgba(192,57,43,0.2); }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center; padding: 4rem 2rem;
+    color: var(--text3);
+  }
+  .empty-state .es-icon { font-size: 40px; margin-bottom: 1rem; }
+  .empty-state p { font-size: 15px; margin-bottom: 0.5rem; color: var(--text2); }
+  .empty-state small { font-size: 13px; }
+
+  /* ─── MODAL ─── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .overlay.show { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    width: 100%; max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    transform: translateY(10px);
+    transition: transform 0.2s;
+  }
+  .overlay.show .modal { transform: translateY(0); }
+  .modal-title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px; margin-bottom: 1.25rem;
+  }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+  .form-input {
+    width: 100%; padding: 9px 12px;
+    border: 1px solid var(--border2); border-radius: var(--radius-sm);
+    font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text);
+    background: var(--bg); outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-input:focus { border-color: var(--accent); background: var(--surface); }
+  textarea.form-input { resize: vertical; min-height: 90px; line-height: 1.6; }
+  select.form-input { cursor: pointer; }
+  .form-row { display: flex; gap: 8px; }
+  .form-row .form-group { flex: 1; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+  .color-pick { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .color-swatch {
+    width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: border-color 0.1s, transform 0.1s;
+  }
+  .color-swatch:hover { transform: scale(1.15); }
+  .color-swatch.sel { border-color: var(--text); }
+
+  /* ─── TERM DETAIL MODAL ─── */
+  .term-detail { max-width: 560px; }
+  .term-detail .td-name {
+    font-family: 'Instrument Serif', serif; font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .term-detail .td-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 1rem; }
+  .term-detail .td-def {
+    font-size: 15px; line-height: 1.75; color: var(--text);
+    border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.5rem;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* ── dark mode toggle ── */
+  .theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .theme-toggle:hover { background: var(--surface2); }
+
+  /* smooth transitions */
+  *, *::before, *::after { transition: background-color 0.2s, border-color 0.2s, color 0.15s; }
+  .terms-grid, .sidebar, .term-card, .modal { transition: background-color 0.2s; }
+
+  /* ── MOBILE / RESPONSIVE ── */
+  .hamburger {
+    display: none;
+    align-items: center; justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    cursor: pointer; font-size: 18px; flex-shrink: 0;
+  }
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 90;
+  }
+  .sidebar-overlay.show { display: block; }
+
+  @media (max-width: 680px) {
+    .hamburger { display: inline-flex; }
+    .topbar { padding: 0 1rem; gap: 8px; }
+    .topbar-search { max-width: none; flex: 1; }
+    .topbar-search input { font-size: 13px; }
+    .topbar-right .btn-label { display: none; }
+    .topbar-right .btn { padding: 7px 10px; }
+
+    /* sidebar slides in from left */
+    .sidebar {
+      position: fixed;
+      top: 56px; left: 0; bottom: 0;
+      width: 260px;
+      z-index: 95;
+      transform: translateX(-100%);
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .main-header {
+      padding: 1rem 1rem 0;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .main-header .btn { width: 100%; justify-content: center; }
+    .main-title { font-size: 22px; }
+
+    .filter-bar { padding: 0.6rem 1rem; gap: 5px; }
+
+    .terms-grid {
+      padding: 0 1rem 1.5rem;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .modal {
+      max-width: 100%;
+      margin: 1rem;
+      border-radius: var(--radius);
+    }
+    .overlay { align-items: flex-end; padding: 0; }
+    .overlay .modal {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      margin: 0;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .overlay.show .modal { transform: translateY(0); }
+
+    .form-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">glos<span>sar</span></div>
+  <div class="topbar-search">
+    <span class="si">🔍</span>
+    <input type="text" id="globalSearch" placeholder="Alle Begriffe durchsuchen …" oninput="renderTerms()">
+  </div>
+  <div class="topbar-right">
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()" title="Menü">☰</button>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Dark Mode umschalten">🌙</button>
+    <button class="btn" onclick="openModal('subject')">＋ Fach</button>
+    <button class="btn primary" onclick="openModal('term')">＋ Begriff</button>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Fächer</span>
+      <button class="sidebar-add" onclick="openModal('subject')" title="Fach hinzufügen">＋</button>
+    </div>
+    <div id="sidebarList"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="main-header">
+      <div>
+        <div class="main-title" id="viewTitle">Alle Begriffe</div>
+        <div class="main-subtitle" id="viewSub"></div>
+      </div>
+      <button class="btn primary" onclick="openModal('term')">＋ Begriff hinzufügen</button>
+    </div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="terms-grid" id="termsGrid"></div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal" onclick="event.stopPropagation()"></div>
+</div>
+
+<script>
+const COLORS = ['#2d5a27','#1a6b8a','#7b3fa0','#b5451b','#b58b00','#1a5e6e','#8a3a50','#3a5ea0','#4a7c59','#7a5a2a'];
+const COLOR_NAMES = ['Grün','Blau','Lila','Orange','Gelb','Türkis','Pink','Dunkelblau','Sage','Braun'];
+
+let data = {
+  subjects: [
+    {
+      id:'bio', name:'Biologie', color:'#2d5a27',
+      categories:[
+        {id:'mitose', name:'Mitose'},
+        {id:'meiose', name:'Meiose'},
+        {id:'genetik', name:'Humangenetik'},
+        {id:'allgemein', name:'Allgemein'}
+      ]
+    }
+  ],
+  terms: [
+    {id:'t1',subjectId:'bio',catId:'mitose',name:'Mitose',def:'Kernteiling, bei der aus einer Mutterzelle zwei genetisch identische Tochterzellen mit demselben Chromosomensatz entstehen. Grundlage für Wachstum und Regeneration.'},
+    {id:'t2',subjectId:'bio',catId:'meiose',name:'Meiose',def:'Zwei aufeinanderfolgende Zellteilungen (Meiose I + II), die aus einer diploiden Zelle vier haploide Keimzellen erzeugen. Ermöglicht die sexuelle Fortpflanzung.'},
+    {id:'t3',subjectId:'bio',catId:'mitose',name:'Interphase',def:'Phase zwischen zwei Teilungen: Zelle wächst, DNA wird repliziert (S-Phase) und die Zelle bereitet sich auf die Teilung vor (G1- und G2-Phase).'},
+    {id:'t4',subjectId:'bio',catId:'mitose',name:'Prophase',def:'Erste Phase der Mitose: Chromatin kondensiert zu sichtbaren Chromosomen (je 2 Chromatiden). Kernhülle löst sich auf, Spindelapparat bildet sich.'},
+    {id:'t5',subjectId:'bio',catId:'mitose',name:'Metaphase',def:'Chromosomen ordnen sich auf der Äquatorialplatte an und werden von Spindelfasern gehalten. Günstigste Phase für das Zählen von Chromosomen.'},
+    {id:'t6',subjectId:'bio',catId:'mitose',name:'Anaphase',def:'Schwesterchromatiden werden zu entgegengesetzten Polen der Zelle gezogen. Die Chromosomenzahl verdoppelt sich kurzzeitig.'},
+    {id:'t7',subjectId:'bio',catId:'mitose',name:'Telophase',def:'Neue Kernhüllen bilden sich um die Chromosomensätze, Chromosomen dekondensieren. Anschließend Cytokinese (Zellteilung).'},
+    {id:'t8',subjectId:'bio',catId:'mitose',name:'Schwesterchromatiden',def:'Zwei identische DNA-Kopien, die nach der Replikation über das Centromer verbunden sind. Werden in der Anaphase getrennt.'},
+    {id:'t9',subjectId:'bio',catId:'allgemein',name:'Centromer',def:'Engstelle am Chromosom, an der die beiden Schwesterchromatiden zusammenhalten und die Spindelfasern ansetzen.'},
+    {id:'t10',subjectId:'bio',catId:'mitose',name:'Spindelapparat',def:'Aus Mikrotubuli bestehende Struktur, die Chromosomen zu den Zellpolen zieht. Geht von den Centrosomen aus.'},
+    {id:'t11',subjectId:'bio',catId:'mitose',name:'Cytokinese',def:'Teilung des Zellplasmas nach der Kernteilung. Ergebnis: zwei vollständige Tochterzellen.'},
+    {id:'t12',subjectId:'bio',catId:'allgemein',name:'Chromosom',def:'Träger der Erbinformation, bestehend aus DNA und Proteinen (Histone). Der Mensch besitzt 46 Chromosomen (23 Paare).'},
+    {id:'t13',subjectId:'bio',catId:'allgemein',name:'Chromatid',def:'Jeder der beiden identischen Stränge eines replizierten Chromosoms. Zwei Chromatiden bilden ein Chromosom nach der Replikation.'},
+    {id:'t14',subjectId:'bio',catId:'allgemein',name:'Diploider Chromosomensatz (2n)',def:'Doppelter Chromosomensatz – jedes Chromosom liegt paarweise vor. Beim Menschen: 2n = 46. Typisch für Körperzellen.'},
+    {id:'t15',subjectId:'bio',catId:'allgemein',name:'Haploider Chromosomensatz (n)',def:'Einfacher Chromosomensatz – jedes Chromosom liegt nur einmal vor. Beim Menschen: n = 23. Typisch für Keimzellen.'},
+    {id:'t16',subjectId:'bio',catId:'meiose',name:'Meiose I',def:'Erste Reifeteilung: homologe Chromosomenpaare werden getrennt. Ergebnis: zwei haploide Zellen mit je zwei Chromatiden.'},
+    {id:'t17',subjectId:'bio',catId:'meiose',name:'Meiose II',def:'Zweite Reifeteilung: Schwesterchromatiden werden getrennt (ähnlich der Mitose). Ergebnis: vier haploide Tochterzellen.'},
+    {id:'t18',subjectId:'bio',catId:'meiose',name:'Homologe Chromosomen',def:'Chromosomenpaare (je eines vom Vater, eines von der Mutter) mit gleicher Genstruktur, aber ggf. verschiedenen Allelen.'},
+    {id:'t19',subjectId:'bio',catId:'meiose',name:'Crossing-over',def:'Austausch von DNA-Abschnitten zwischen homologen Chromosomen in der Prophase I. Erhöht die genetische Variabilität der Nachkommen.'},
+    {id:'t20',subjectId:'bio',catId:'meiose',name:'Rekombination',def:'Neukombination genetischen Materials durch Crossing-over und zufällige Verteilung der homologen Chromosomen. Ursache genetischer Vielfalt.'},
+    {id:'t21',subjectId:'bio',catId:'meiose',name:'Nondisjunktion',def:'Fehler bei der Zellteilung: Chromosomen oder Chromatiden trennen sich nicht. Führt zu Zellen mit falscher Chromosomenzahl (Aneuploidie).'},
+    {id:'t22',subjectId:'bio',catId:'meiose',name:'Trisomie',def:'Vorhandensein von drei Exemplaren eines Chromosoms statt zwei (2n+1). Beispiel: Trisomie 21 = Down-Syndrom.'},
+    {id:'t23',subjectId:'bio',catId:'meiose',name:'Monosomie',def:'Vorhandensein von nur einem Exemplar eines Chromosoms (2n−1). Beispiel: Turner-Syndrom (45,X).'},
+    {id:'t24',subjectId:'bio',catId:'meiose',name:'Keimzellen',def:'Eizellen und Spermien – entstehen durch Meiose und tragen den haploiden Chromosomensatz.'},
+    {id:'t25',subjectId:'bio',catId:'genetik',name:'Gen',def:'Abschnitt der DNA, der die Information für ein bestimmtes Merkmal (Protein) trägt. Liegt an einem festen Ort (Locus) auf einem Chromosom.'},
+    {id:'t26',subjectId:'bio',catId:'genetik',name:'Allel',def:'Eine von mehreren möglichen Varianten eines Gens. Jeder Mensch besitzt für jedes Gen zwei Allele (eines auf jedem homologen Chromosom).'},
+    {id:'t27',subjectId:'bio',catId:'genetik',name:'Genotyp',def:'Die genetische Ausstattung eines Individuums – die Gesamtheit aller Allele. Nicht äußerlich sichtbar. Beispiel: AA, Aa oder aa.'},
+    {id:'t28',subjectId:'bio',catId:'genetik',name:'Phänotyp',def:'Das äußerlich sichtbare oder messbare Merkmal eines Organismus, das aus Genotyp und Umwelt resultiert.'},
+    {id:'t29',subjectId:'bio',catId:'genetik',name:'Dominant',def:'Ein Allel, das sich gegenüber dem anderen durchsetzt. Bereits in heterozygotem Zustand (Aa) im Phänotyp sichtbar.'},
+    {id:'t30',subjectId:'bio',catId:'genetik',name:'Rezessiv',def:'Ein Allel, das nur im homozygoten Zustand (aa) im Phänotyp sichtbar wird, da das dominante Allel es überdeckt.'},
+    {id:'t31',subjectId:'bio',catId:'genetik',name:'Homozygot',def:'Beide Allele eines Genortes sind identisch (AA oder aa). Reinerbig.'},
+    {id:'t32',subjectId:'bio',catId:'genetik',name:'Heterozygot',def:'Die beiden Allele eines Genortes sind verschieden (Aa). Mischerbig – Träger des rezessiven Merkmals.'},
+    {id:'t33',subjectId:'bio',catId:'genetik',name:'Codominanz',def:'Beide Allele werden gleichzeitig exprimiert, keines dominiert. Beispiel: Blutgruppe AB (Allele I^A und I^B beide wirksam).'},
+    {id:'t34',subjectId:'bio',catId:'genetik',name:'Autosomal',def:'Ein Gen liegt auf einem Autosom (Nicht-Geschlechtschromosom). Betrifft Männer und Frauen gleich häufig.'},
+    {id:'t35',subjectId:'bio',catId:'genetik',name:'X-chromosomal',def:'Ein Gen liegt auf dem X-Chromosom. Männer (XY) erkranken häufiger bei rezessiven X-chromosomalen Krankheiten.'},
+    {id:'t36',subjectId:'bio',catId:'genetik',name:'Träger / Konduktorin',def:'Heterozygote Person (Aa), die das rezessive Allel trägt aber selbst nicht erkrankt. Kann das Allel an Kinder weitergeben.'},
+    {id:'t37',subjectId:'bio',catId:'genetik',name:'Stammbaum',def:'Schematische Darstellung der Vererbung eines Merkmals über mehrere Generationen. Kreise = Frauen, Quadrate = Männer.'},
+    {id:'t38',subjectId:'bio',catId:'genetik',name:'Punnett-Quadrat',def:'Tabelle zur Darstellung aller möglichen Genkombinationen bei einer Kreuzung. Zeigt Genotyp- und Phänotypverhältnisse der Nachkommen.'},
+    {id:'t39',subjectId:'bio',catId:'genetik',name:'Mutation',def:'Veränderung der DNA-Sequenz. Kann spontan oder durch Mutagene entstehen. Grundlage von Erbkrankheiten und Evolution.'},
+    {id:'t40',subjectId:'bio',catId:'genetik',name:'Down-Syndrom (Trisomie 21)',def:'Chromosomenaberration durch dreifaches Auftreten von Chromosom 21. Ursache: Nondisjunktion in der Meiose.'},
+    {id:'t41',subjectId:'bio',catId:'genetik',name:'Rot-Grün-Blindheit',def:'X-chromosomal-rezessiv vererbte Sehschwäche. Männer erkranken häufiger, Frauen können Konduktorinnen sein.'},
+    {id:'t42',subjectId:'bio',catId:'allgemein',name:'DNA-Replikation',def:'Verdopplung der DNA vor der Zellteilung. Erfolgt semikonservativ: jeder Tochterstrang besteht aus einem Eltern- und einem neuen Strang.'},
+    {id:'t43',subjectId:'bio',catId:'genetik',name:'Locus',def:'Fester Ort eines Gens auf einem Chromosom. Homologe Chromosomen tragen an gleichen Loci die Allele desselben Gens.'},
+    {id:'t44',subjectId:'bio',catId:'genetik',name:'Erbkrankheit',def:'Krankheit, die durch veränderte (mutierte) Gene oder Chromosomenaberrationen verursacht wird und vererbt werden kann.'},
+  ]
+};
+
+let view = { subjectId: null, catId: null };
+let activeFilter = 'alle';
+let selectedColor = COLORS[0];
+let editingTerm = null;
+let editingSubject = null;
+
+function save() {
+  try { localStorage.setItem('glossar_data', JSON.stringify(data)); } catch(e){}
+}
+function load() {
+  try {
+    const d = localStorage.getItem('glossar_data');
+    if (d) data = JSON.parse(d);
+  } catch(e){}
+}
+
+function uid() { return 't' + Date.now() + Math.random().toString(36).slice(2,6); }
+
+function getSubject(id) { return data.subjects.find(s => s.id === id); }
+function getCat(subId, catId) {
+  const s = getSubject(subId);
+  return s ? s.categories.find(c => c.id === catId) : null;
+}
+function termColor(term) {
+  const s = getSubject(term.subjectId);
+  return s ? s.color : '#888';
+}
+function catBg(color) {
+  return color + '22';
+}
+
+// ─── SIDEBAR ───
+function renderSidebar() {
+  const el = document.getElementById('sidebarList');
+  el.innerHTML = '';
+  data.subjects.forEach(sub => {
+    const termCount = data.terms.filter(t => t.subjectId === sub.id).length;
+    const isOpen = view.subjectId === sub.id || !view.subjectId;
+    const isActive = view.subjectId === sub.id && !view.catId;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'subject-item';
+
+    wrap.innerHTML = `
+      <div class="subject-head${isActive ? ' active' : ''}" onclick="selectSubject('${sub.id}')">
+        <div class="subject-dot" style="background:${sub.color}"></div>
+        <span class="subject-name">${sub.name}</span>
+        <span class="subject-count">${termCount}</span>
+        <span class="subject-chevron${isOpen ? ' open' : ''}">▶</span>
+      </div>
+      ${isOpen ? `
+        <div class="cat-list">
+          ${sub.categories.map(cat => {
+            const cc = data.terms.filter(t => t.subjectId === sub.id && t.catId === cat.id).length;
+            const isCatActive = view.subjectId === sub.id && view.catId === cat.id;
+            return `<div class="cat-item${isCatActive ? ' active' : ''}" style="color:${isCatActive ? sub.color : ''}" onclick="selectCat('${sub.id}','${cat.id}')">
+              <span class="cat-dot" style="background:${sub.color};opacity:0.6"></span>
+              ${cat.name}
+              <span class="cat-count">${cc}</span>
+            </div>`;
+          }).join('')}
+          <button class="cat-add-btn" onclick="openModal('category','${sub.id}')">＋ Kategorie</button>
+        </div>
+      ` : ''}
+    `;
+    el.appendChild(wrap);
+  });
+}
+
+function selectSubject(id) {
+  if(window.innerWidth<=680) closeSidebar();
+  if (view.subjectId === id && !view.catId) { view.subjectId = null; view.catId = null; }
+  else { view.subjectId = id; view.catId = null; }
+  activeFilter = 'alle';
+  renderAll();
+}
+function selectCat(subId, catId) {
+  if(window.innerWidth<=680) closeSidebar();
+  view.subjectId = subId; view.catId = catId;
+  activeFilter = 'alle';
+  renderAll();
+}
+
+// ─── FILTER BAR ───
+function renderFilterBar() {
+  const bar = document.getElementById('filterBar');
+  if (!view.subjectId) { bar.innerHTML = ''; return; }
+  const sub = getSubject(view.subjectId);
+  const cats = view.catId ? [] : sub.categories;
+
+  if (!cats.length) { bar.innerHTML = ''; return; }
+
+  bar.innerHTML = `
+    <span class="filter-chip${activeFilter==='alle'?' active':''}" onclick="setFilter('alle')">Alle</span>
+    ${cats.map(c => `<span class="filter-chip${activeFilter===c.id?' active':''}" onclick="setFilter('${c.id}')">${c.name}</span>`).join('')}
+  `;
+}
+function setFilter(f) { activeFilter = f; renderTerms(); renderFilterBar(); }
+
+// ─── HEADER ───
+function renderHeader() {
+  const title = document.getElementById('viewTitle');
+  const sub = document.getElementById('viewSub');
+  if (!view.subjectId) {
+    title.textContent = 'Alle Begriffe';
+    sub.textContent = data.terms.length + ' Begriffe in ' + data.subjects.length + ' Fächern';
+  } else {
+    const s = getSubject(view.subjectId);
+    if (view.catId) {
+      const c = getCat(view.subjectId, view.catId);
+      title.textContent = c ? c.name : '';
+      const n = data.terms.filter(t=>t.subjectId===view.subjectId&&t.catId===view.catId).length;
+      sub.textContent = s.name + ' · ' + n + ' Begriffe';
+    } else {
+      title.textContent = s.name;
+      const n = data.terms.filter(t=>t.subjectId===view.subjectId).length;
+      sub.textContent = n + ' Begriffe · ' + s.categories.length + ' Kategorien';
+    }
+  }
+}
+
+// ─── TERMS ───
+function renderTerms() {
+  const grid = document.getElementById('termsGrid');
+  const q = document.getElementById('globalSearch').value.toLowerCase();
+  let terms = data.terms;
+
+  if (view.subjectId) terms = terms.filter(t => t.subjectId === view.subjectId);
+  if (view.catId) terms = terms.filter(t => t.catId === view.catId);
+  else if (activeFilter !== 'alle') terms = terms.filter(t => t.catId === activeFilter);
+  if (q) terms = terms.filter(t => t.name.toLowerCase().includes(q) || t.def.toLowerCase().includes(q));
+
+  terms = terms.sort((a,b) => a.name.localeCompare(b.name, 'de'));
+
+  if (!terms.length) {
+    grid.innerHTML = `<div class="empty-state">
+      <div class="es-icon">📖</div>
+      <p>Noch keine Begriffe</p>
+      <small>Füge deinen ersten Begriff hinzu</small>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = terms.map(t => {
+    const sub = getSubject(t.subjectId);
+    const cat = getCat(t.subjectId, t.catId);
+    const color = sub ? sub.color : '#888';
+    return `<div class="term-card" onclick="showTerm('${t.id}')">
+      <div class="term-card-head">
+        <span class="term-name">${t.name}</span>
+        ${cat ? `<span class="cat-tag" style="background:${catBg(color)};color:${color}">${cat.name}</span>` : ''}
+      </div>
+      <div class="term-def">${t.def}</div>
+      <div class="term-card-actions">
+        <button class="term-action" onclick="event.stopPropagation();editTerm('${t.id}')">Bearbeiten</button>
+        <button class="term-action del" onclick="event.stopPropagation();deleteTerm('${t.id}')">Löschen</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAll() {
+  renderSidebar();
+  renderHeader();
+  renderFilterBar();
+  renderTerms();
+}
+
+// ─── MODALS ───
+function openModal(type, extra) {
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('modal');
+  overlay.classList.add('show');
+
+  if (type === 'subject') {
+    const editing = editingSubject;
+    modal.innerHTML = `
+      <div class="modal-title">${editing ? 'Fach bearbeiten' : 'Neues Fach'}</div>
+      <div class="form-group">
+        <label class="form-label">Name des Fachs</label>
+        <input class="form-input" id="subName" placeholder="z. B. Chemie, Mathematik …" value="${editing ? editing.name : ''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Farbe</label>
+        <div class="color-pick" id="colorPick">
+          ${COLORS.map((c,i) => `<div class="color-swatch${selectedColor===c?' sel':''}" style="background:${c}" onclick="pickColor('${c}')" title="${COLOR_NAMES[i]}"></div>`).join('')}
+        </div>
+      </div>
+      <div class="modal-actions">
+        ${editing ? `<button class="btn danger" onclick="deleteSubject('${editing.id}')">Fach löschen</button>` : ''}
+        <button class="btn" onclick="closeModal()">Abbrechen</button>
+        <button class="btn primary" onclick="saveSubject(${editing ? `'${editing.id}'` : 'null'})">${editing ? 'Speichern' : 'Erstellen'}</button>
+      </div>
+    `;
+    if (editing) selectedColor = editing.color;
+  }
+  else if (type === 'category') {
+    const subId = extra;
+    modal.innerHTML = `
+      <div class="modal-title">Neue Kategorie</div>
+      <div class="form-group">
+        <label class="form-label">Name der Kategorie</label>
+        <input class="form-input" id="catName" placeholder="z. B. Zellbiologie, Organik …">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Abbrechen</button>
+        <button class="btn primary" onclick="saveCat('${subId}')">Erstellen</button>
+      </div>
+    `;
+  }
+  else if (type === 'term') {
+    const t = editingTerm;
+    modal.innerHTML = `
+      <div class="modal-title">${t ? 'Begriff bearbeiten' : 'Neuer Begriff'}</div>
+      <div class="form-group">
+        <label class="form-label">Begriff</label>
+        <input class="form-input" id="termName" placeholder="Fachbegriff" value="${t ? t.name : ''}">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fach</label>
+          <select class="form-input" id="termSubject" onchange="updateCatSelect()">
+            ${data.subjects.map(s => `<option value="${s.id}"${(t&&t.subjectId===s.id)||(view.subjectId===s.id&&!t)?'selected':''}>${s.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kategorie</label>
+          <select class="form-input" id="termCat">
+            ${getCatOptions(t ? t.subjectId : (view.subjectId || data.subjects[0]?.id), t ? t.catId : view.catId)}
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Definition / Erklärung</label>
+        <textarea class="form-input" id="termDef" placeholder="Erkläre den Begriff …">${t ? t.def : ''}</textarea>
+      </div>
+      <div class="modal-actions">
+        ${t ? `<button class="btn danger" onclick="deleteTerm('${t.id}',true)">Löschen</button>` : ''}
+        <button class="btn" onclick="closeModal()">Abbrechen</button>
+        <button class="btn primary" onclick="saveTerm(${t ? `'${t.id}'` : 'null'})">${t ? 'Speichern' : 'Hinzufügen'}</button>
+      </div>
+    `;
+  }
+}
+
+function getCatOptions(subId, selCatId) {
+  const sub = getSubject(subId);
+  if (!sub) return '';
+  return sub.categories.map(c => `<option value="${c.id}"${selCatId===c.id?'selected':''}>${c.name}</option>`).join('');
+}
+
+function updateCatSelect() {
+  const subId = document.getElementById('termSubject').value;
+  document.getElementById('termCat').innerHTML = getCatOptions(subId, null);
+}
+
+function pickColor(c) {
+  selectedColor = c;
+  document.querySelectorAll('.color-swatch').forEach(el => {
+    el.classList.toggle('sel', el.style.background === c || el.style.backgroundColor === c);
+  });
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('overlay')) return;
+  document.getElementById('overlay').classList.remove('show');
+  editingTerm = null;
+  editingSubject = null;
+}
+
+// ─── SAVE ACTIONS ───
+function saveSubject(id) {
+  const name = document.getElementById('subName').value.trim();
+  if (!name) return;
+  if (id) {
+    const s = getSubject(id);
+    if (s) { s.name = name; s.color = selectedColor; }
+  } else {
+    data.subjects.push({ id: uid(), name, color: selectedColor, categories: [] });
+  }
+  save(); closeModal(); selectedColor = COLORS[0]; renderAll();
+}
+
+function saveCat(subId) {
+  const name = document.getElementById('catName').value.trim();
+  if (!name) return;
+  const sub = getSubject(subId);
+  if (sub) sub.categories.push({ id: uid(), name });
+  save(); closeModal(); renderAll();
+}
+
+function saveTerm(id) {
+  const name = document.getElementById('termName').value.trim();
+  const def = document.getElementById('termDef').value.trim();
+  const subjectId = document.getElementById('termSubject').value;
+  const catId = document.getElementById('termCat').value;
+  if (!name || !def) return;
+  if (id) {
+    const t = data.terms.find(t => t.id === id);
+    if (t) { t.name = name; t.def = def; t.subjectId = subjectId; t.catId = catId; }
+  } else {
+    data.terms.push({ id: uid(), subjectId, catId, name, def });
+  }
+  save(); closeModal(); renderAll();
+}
+
+function editTerm(id) {
+  editingTerm = data.terms.find(t => t.id === id);
+  openModal('term');
+}
+
+function deleteTerm(id, fromModal) {
+  if (!confirm('Begriff löschen?')) return;
+  data.terms = data.terms.filter(t => t.id !== id);
+  save();
+  if (fromModal) closeModal();
+  renderAll();
+}
+
+function deleteSubject(id) {
+  if (!confirm('Fach und alle zugehörigen Begriffe löschen?')) return;
+  data.subjects = data.subjects.filter(s => s.id !== id);
+  data.terms = data.terms.filter(t => t.subjectId !== id);
+  if (view.subjectId === id) { view.subjectId = null; view.catId = null; }
+  save(); closeModal(); renderAll();
+}
+
+// ─── TERM DETAIL ───
+function showTerm(id) {
+  const t = data.terms.find(x => x.id === id);
+  if (!t) return;
+  const sub = getSubject(t.subjectId);
+  const cat = getCat(t.subjectId, t.catId);
+  const color = sub ? sub.color : '#888';
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('modal');
+  modal.classList.add('term-detail');
+  modal.innerHTML = `
+    <div class="td-name">${t.name}</div>
+    <div class="td-meta">
+      ${sub ? `<span class="cat-tag" style="background:${catBg(color)};color:${color}">${sub.name}</span>` : ''}
+      ${cat ? `<span class="cat-tag" style="background:${catBg(color)};color:${color};opacity:0.7">${cat.name}</span>` : ''}
+    </div>
+    <div class="td-def">${t.def}</div>
+    <div class="modal-actions" style="margin-top:1.5rem;">
+      <button class="btn" onclick="editTerm('${t.id}');document.getElementById('modal').classList.remove('term-detail')">Bearbeiten</button>
+      <button class="btn primary" onclick="closeModal()">Schließen</button>
+    </div>
+  `;
+  overlay.classList.add('show');
+}
+
+
+
+// ─── MOBILE SIDEBAR ───
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  const isOpen = sb.classList.contains('open');
+  sb.classList.toggle('open', !isOpen);
+  ov.classList.toggle('show', !isOpen);
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+// close sidebar on cat/subject select on mobile
+const _origSelectSubject = selectSubject;
+
+// ─── DARK MODE ───
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
+  try { localStorage.setItem('glossar_theme', next); } catch(e){}
+}
+function initTheme() {
+  let theme = 'light';
+  try { theme = localStorage.getItem('glossar_theme') || 'light'; } catch(e){}
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = '☀️';
+  }
+}
+
+// ─── INIT ───
+initTheme();
+load();
+selectedColor = COLORS[0];
+renderAll();
+</script>
+</body>
+</html>
